@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import class_route, student_route
+from .routers import class_route, student_route, auth
 from .utils.db import connect_db
 from contextlib import asynccontextmanager
 
@@ -11,8 +11,8 @@ async def lifespan(app : FastAPI):
     await connect_db.close_con(app.state.db_pool)
     print('Close DB') 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title='Student Manage API')
 
 app.include_router(student_route.router, prefix="/student")
 app.include_router(class_route.router, prefix="/class")
-
+app.include_router(auth.router, prefix='/auth')
