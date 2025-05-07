@@ -12,6 +12,9 @@ class Settings:
     POSTGRES_PORT : str = os.getenv('port_db')
     POSTGRES_DB : str = os.getenv('name_db')
     POSTGRES_SERVER : str = os.getenv('server_db')
+    API_TOKEN : str = os.getenv('token_api')
+    RAW_USERNAME : str = os.getenv('raw_username')
+    RAW_PASSWORD : str = os.getenv('raw_password')
     DATABASE_URL : str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 setting = Settings()

@@ -9,3 +9,5 @@ class BaseResponse(BaseModel):
 class DataResponse(BaseResponse):
     data : Optional[Union[Dict, List]] = None
 
+class TokenResponse(BaseResponse): 
+    token : str

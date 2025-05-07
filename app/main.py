@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import class_route, student_route
+from .routers import class_route, student_route, auth
 from .utils.db import connect_db
 from contextlib import asynccontextmanager
 
@@ -15,4 +15,4 @@ app = FastAPI(lifespan=lifespan, title='Student Manage API')
 
 app.include_router(student_route.router, prefix="/student")
 app.include_router(class_route.router, prefix="/class")
-
+app.include_router(auth.router, prefix='/auth')

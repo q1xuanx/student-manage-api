@@ -12,11 +12,16 @@ async def add_new_class(conn : Connection, student : StudentClass) -> Dict[str, 
             'code': 400,
             'message': 'Name class exist !'
         }
-    await class_student.insert_new_class(conn, student)
-    return {
+    status = await class_student.insert_new_class(conn, student)
+    if status: 
+        return {
             'code': 200,
             'message': 'Add Success'
         }
+    return {
+        'code': 400,
+        'message': 'Add fail'
+    }
 
 async def update_class(conn : Connection, update_class : UpdateStudentClass) -> bool: 
     updated = await class_student.update_class(conn, update_class)
