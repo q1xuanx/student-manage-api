@@ -1,9 +1,9 @@
 from app.crud import class_student
 from asyncpg.connection import Connection
 from ..schema.class_student import StudentClass, UpdateStudentClass
-from ..schema.student import DisplayStudentModel, GroupStudentModel
+from ..schema.student import DisplayStudentModel
 import math
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 async def add_new_class(conn : Connection, student : StudentClass) -> Dict[str, any]: 
     check_valid_name_class = await class_student.check_valid_class_name(conn, student.class_name)
@@ -72,32 +72,3 @@ async def search_student_by_class(conn : Connection, class_search : str) -> Dict
         'message': 'success',
         'data': list_class
     }
-
-
-
-"""
-{
-    "21DTHB1": 
-        {
-            "student": 
-            [
-
-            ], 
-            "totals":
-            [
-                
-            ]
-        }
-    "21DTHB2": 
-        {
-            "student": 
-            [
-
-            ], 
-            "totals":
-            [
-
-            ]
-        }   
-}
-"""

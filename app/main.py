@@ -11,7 +11,7 @@ async def lifespan(app : FastAPI):
     await connect_db.close_con(app.state.db_pool)
     print('Close DB') 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title='Student Manage API')
 
 app.include_router(student_route.router, prefix="/student")
 app.include_router(class_route.router, prefix="/class")
