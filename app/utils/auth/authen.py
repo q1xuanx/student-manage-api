@@ -17,7 +17,7 @@ def auth_req(func : Callable):
             raise HTTPException(status_code=400, detail="Missing request")
         
         token = req.headers.get("Authorization")
-        print(token)
+        #print(token)
         if token != setting.API_TOKEN: 
             raise HTTPException(status_code=403, detail='Invalid token')
         return await func(*args, **kwargs)
