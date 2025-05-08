@@ -15,6 +15,12 @@ async def update_class(conn : Connection, class_update : UpdateStudentClass) -> 
         return True 
     return False
 
+async def valid_class(conn : Connection, id_class : int) -> bool: 
+    status = await conn.fetchval("SELECT classid FROM studentclass WHERE classid = $1", id_class)
+    if status != None:
+        return True
+    return False
+
 async def list_class (conn: Connection, limit : int, skip: int) -> List[Record]: 
     list_class = await conn.fetch("SELECT * FROM studentclass LIMIT $1 OFFSET $2", limit, skip)
     return list_class

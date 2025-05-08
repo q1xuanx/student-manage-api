@@ -1,32 +1,48 @@
-from ..crud import student
+from ..crud import student as student_crud
 from asyncpg.connection import Connection
 from ..schema.student import StudentModel, UpdateStudentModel
 from datetime import date
 from ..schema.response import BaseResponse, DataResponse
 
 
-async def add_student(conn : Connection, student : StudentModel) -> BaseResponse:
-    check_exist = await student.check_exist_student(conn, student)
+async def validate_data(conn : Connection, student : StudentModel) -> BaseResponse: 
+    valid_id_class = await student_crud.check_valid_id_class(conn, student.class_id)
+    if not valid_id_class:
+        return {
+            'code': 400,
+            'message': 'Id class not found !'
+        }
+    check_exist = await student_crud.check_exist_student(conn, student)
     if check_exist:
         return { 
                 'code': 400,
                 'message': 'Student Exist !'
             }
-    
-    status = await student.add_student(conn, student)
+    return {
+        'code': 200,
+        'message': 'Data valid'
+    }
+
+async def add_student(conn : Connection, student : StudentModel) -> BaseResponse:
+    valid_data = await validate_data(conn, student)
+    if valid_data['code'] == 400:
+        return valid_data
+    status = await student_crud.add_student(conn, student)
     if status: 
         return {
             'code': 200, 
             'message': 'Add success'
         }
-    
     return { 
         'code': 400,
         'message': 'Add Fail !'
     }
     
-async def update_student(conn : Connection, student : UpdateStudentModel) -> BaseResponse: 
-    status = await student.update_student(conn, student)
+async def update_student(conn : Connection, student : UpdateStudentModel) -> BaseResponse:
+    valid_data = await validate_data(conn, student)
+    if valid_data['code'] == 400:
+        return valid_data
+    status = await student_crud.update_student(conn, student)
     if status: 
             return { 
             'code': 200, 
@@ -37,7 +53,7 @@ async def update_student(conn : Connection, student : UpdateStudentModel) -> Bas
         'message': 'Update Failed'
     }
 async def delete_student(conn : Connection, id_student : int) -> BaseResponse: 
-    status = await student.delete_student(conn, id_student)
+    status = await student_crud.delete_student(conn, id_student)
     if status: 
         return { 
             'code': 200, 
@@ -48,7 +64,7 @@ async def delete_student(conn : Connection, id_student : int) -> BaseResponse:
         'message': 'Delete Failed'
     }
 async def search_student(conn : Connection, name_student : str | None = None, dob : date | None = None, faculty : str | None = None, id_class : int | None = None) -> DataResponse: 
-    list_student_response = await student.search_student(conn, name_student, dob, faculty, id_class)
+    list_student_response = await student_crud.search_student(conn, name_student, dob, faculty, id_class)
     if list_student_response['status']:
         return {
             'code': 200,

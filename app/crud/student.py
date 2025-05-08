@@ -2,6 +2,12 @@ from asyncpg.connection import Connection
 from ..schema.student import StudentModel, UpdateStudentModel
 from datetime import date
 from typing import Dict
+from . import class_student
+
+async def check_valid_id_class(conn : Connection, id_class : int) -> bool:
+    status = await class_student.valid_class(conn, id_class)
+    return status
+
 async def add_student(conn : Connection, student : StudentModel) -> bool: 
     status = await conn.execute("INSERT INTO students(namestudent, dob, faculty, classid) values($1, $2, $3, $4)", student.name_student, student.dob, student.faculty, student.class_id)
     if status: 
