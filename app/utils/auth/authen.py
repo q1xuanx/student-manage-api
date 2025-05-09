@@ -1,7 +1,8 @@
 from fastapi import Request, HTTPException
 from functools import wraps
 from typing import Callable
-from app.settings import setting
+from authx import AuthX, RequestToken
+import traceback
 
 def auth_req(func : Callable): 
     @wraps(func)
@@ -12,13 +13,18 @@ def auth_req(func : Callable):
                 if isinstance(arg, Request):
                     req = arg
                     break
-
         if not req:
             raise HTTPException(status_code=400, detail="Missing request")
-        
-        token = req.headers.get("Authorization")
-        #print(token)
-        if token != setting.API_TOKEN: 
-            raise HTTPException(status_code=403, detail='Invalid token')
+        authx : AuthX = req.app.state.authen_app
+        auth_header = req.headers.get("Authorization")
+        if not auth_header: 
+            raise HTTPException(status_code=401, detail='Token missing')
+        try:
+            token_str = auth_header[7:]
+            request_token = RequestToken(token=token_str, location="headers")
+            authx.verify_token(token=request_token)
+        except Exception as e:
+            print(traceback.format_exc())
+            raise HTTPException(401, detail={"message": str(e)}) from e
         return await func(*args, **kwargs)
     return wrapper
