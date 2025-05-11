@@ -11,7 +11,6 @@ config = AuthXConfig(
 )
 
 authend_app = AuthX(config=config)
-
 @asynccontextmanager
 async def lifespan(app : FastAPI):
     app.state.db_pool = await connect_db.create_con()

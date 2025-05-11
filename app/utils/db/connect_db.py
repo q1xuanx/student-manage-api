@@ -9,7 +9,7 @@ async def create_con():
         database=st.setting.POSTGRES_DB, 
         host=st.setting.POSTGRES_SERVER,
         port=st.setting.POSTGRES_PORT
-    )
+    ,min_size=5, max_size=20)
 
 async def close_con(pool):
     await pool.close()

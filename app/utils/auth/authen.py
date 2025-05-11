@@ -2,7 +2,6 @@ from fastapi import Request, HTTPException
 from functools import wraps
 from typing import Callable
 from authx import AuthX, RequestToken
-import traceback
 
 def auth_req(func : Callable): 
     @wraps(func)
@@ -24,7 +23,6 @@ def auth_req(func : Callable):
             request_token = RequestToken(token=token_str, location="headers")
             authx.verify_token(token=request_token)
         except Exception as e:
-            print(traceback.format_exc())
             raise HTTPException(401, detail={"message": str(e)}) from e
         return await func(*args, **kwargs)
     return wrapper

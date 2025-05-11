@@ -3,7 +3,7 @@ from asyncpg.connection import Connection
 from ..schema.student import StudentModel, UpdateStudentModel
 from datetime import date
 from ..schema.response import BaseResponse, DataResponse
-
+import random
 
 async def validate_data(conn : Connection, student : StudentModel) -> BaseResponse: 
     valid_id_class = await student_crud.check_valid_id_class(conn, student.class_id)
@@ -24,9 +24,9 @@ async def validate_data(conn : Connection, student : StudentModel) -> BaseRespon
     }
 
 async def add_student(conn : Connection, student : StudentModel) -> BaseResponse:
-    valid_data = await validate_data(conn, student)
-    if valid_data['code'] == 400:
-        return valid_data
+    #valid_data = await validate_data(conn, student)
+    # if valid_data['code'] == 400:
+    #     return valid_data
     status = await student_crud.add_student(conn, student)
     if status: 
         return {
@@ -63,8 +63,8 @@ async def delete_student(conn : Connection, id_student : int) -> BaseResponse:
         'code': 400, 
         'message': 'Delete Failed'
     }
-async def search_student(conn : Connection, name_student : str | None = None, dob : date | None = None, faculty : str | None = None, id_class : int | None = None) -> DataResponse: 
-    list_student_response = await student_crud.search_student(conn, name_student, dob, faculty, id_class)
+async def search_student(conn : Connection, limit : int, offset : int, name_student : str | None = None, dob : date | None = None, faculty : str | None = None, id_class : int | None = None) -> DataResponse: 
+    list_student_response = await student_crud.search_student(limit, (offset - 1) * limit, conn, name_student, dob, faculty, id_class)
     if list_student_response['status']:
         return {
             'code': 200,

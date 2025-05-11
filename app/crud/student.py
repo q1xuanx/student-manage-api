@@ -4,6 +4,7 @@ from datetime import date
 from typing import Dict
 from . import class_student
 
+
 async def check_valid_id_class(conn : Connection, id_class : int) -> bool:
     status = await class_student.valid_class(conn, id_class)
     return status
@@ -33,12 +34,12 @@ async def check_exist_student(conn : Connection, student : StudentModel) -> bool
         return False
     return True
 
-async def search_student(conn : Connection, name_student : str | None = None, dob : date| None = None, faculty : str | None = None, class_id : int | None = None) -> Dict[str, any]: 
-    base_query = "SELECT *, COUNT(*) OVER() as TotalStudent FROM students WHERE 1=1 "
+async def search_student(limit : int, offset : int, conn : Connection, name_student : str | None = None, dob : date| None = None, faculty : str | None = None, class_id : int | None = None) -> Dict[str, any]: 
+    base_query = "SELECT idstudent, namestudent, faculty, s.classid, dob FROM students as s LEFT JOIN studentclass as sc ON s.classid=sc.classid WHERE 1=1"
     params = []
     if name_student: 
-        base_query += f" AND namestudent ILIKE ${len(params) + 1}"
-        params.append(name_student)
+        base_query += f" AND namestudent LIKE ${len(params) + 1}"
+        params.append(f"{name_student}%")
     if dob: 
         base_query += f" AND dob = ${len(params) + 1}"
         params.append(dob) 
@@ -48,6 +49,7 @@ async def search_student(conn : Connection, name_student : str | None = None, do
     if class_id: 
         base_query += f" AND classid = ${len(params) + 1}"
         params.append(class_id)
+    base_query += f' LIMIT {limit} OFFSET {offset}'
     get_list_student = await conn.fetch(base_query, *params)
     if not get_list_student:
         return {
@@ -61,11 +63,15 @@ async def search_student(conn : Connection, name_student : str | None = None, do
                                  faculty=student['faculty'], 
                                  class_id=student['classid'])
         list_student.append(stu)
-
-    total_student= get_list_student[0]['totalstudent']
-        
+    get_total_query = base_query.replace('SELECT idstudent, namestudent, faculty, s.classid, dob ', 'SELECT COUNT(*) ')
+    get_total_query = get_total_query.replace(f'LIMIT {limit} OFFSET {offset}', '')
+    totals = await conn.fetchval(get_total_query, *params)
+    total_student = totals
     return {
         'status': True,
         'list': list_student, 
         'total': total_student
     }
+
+
+

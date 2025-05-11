@@ -18,7 +18,7 @@ async def heath_check(request : Request) -> BaseResponse:
     }
 
 @router.post('/add-student', response_model=BaseResponse)
-@auth_req
+#@auth_req
 async def add_student(request : Request, student : StudentModel, conn : Connection = Depends(get_db_pool)) -> BaseResponse:
     status = await student_service.add_student(conn, student)
     return status
@@ -37,6 +37,9 @@ async def delete_student(request : Request, id_student : int, conn : Connection 
 
 @router.get('/search', response_model=DataResponse)
 @auth_req
-async def search_student(request : Request, name_student : str | None = None, dob : date | None = None, faculty : str | None = None, id_class : int | None = None, conn : Connection = Depends(get_db_pool)) -> DataResponse: 
-    list_student = await student_service.search_student(conn, name_student, dob, faculty, id_class)
+async def search_student(request : Request, limit : int = 100, offset : int = 1 , name_student : str | None = None, dob : date | None = None, faculty : str | None = None, id_class : int | None = None, conn : Connection = Depends(get_db_pool)) -> DataResponse: 
+    list_student = await student_service.search_student(conn, limit, offset, name_student, dob, faculty, id_class)
     return list_student
+
+
+
