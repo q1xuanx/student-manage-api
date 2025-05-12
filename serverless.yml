@@ -1,0 +1,39 @@
+service: student-manage
+
+plugins: 
+  - serverless-python-requirements
+
+custom: 
+  pythonRequirements:
+    dockerizePip: true
+    pythonBin: C:/Users/ADMIN/AppData/Local/Programs/Python/Python310/python.exe
+    slim: false
+    strip: false
+
+functions: 
+  app: 
+    handler: app/main.handler
+    events:
+      - httpApi:
+          method: any
+          path: /{proxy+}
+      - httpApi:
+          method: any
+          path: /
+
+provider: 
+  name: aws
+  architecture: x86_64
+  runtime: python3.10
+  timeout: 30
+  region: ap-southeast-1
+  logRetentionInDays: 14
+  environment:
+    USERNAME_DB: ${env:username_db}
+    PASSWORD_DB: ${env:password_db}
+    PORT_DB: ${env:port_db}
+    NAME_DB: ${env:name_db}
+    SERVER_DB: ${env:server_db}
+    TOKEN_API: ${env:token_api}
+    RAW_USERNAME: ${env:raw_username}
+    RAW_PASSWORD: ${env:raw_password}
