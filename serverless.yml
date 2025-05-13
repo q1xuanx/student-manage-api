@@ -1,3 +1,7 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: q1xuanx
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: student-manage
 service: student-manage
 
 plugins: 
@@ -6,9 +10,10 @@ plugins:
 custom: 
   pythonRequirements:
     dockerizePip: true
-    pythonBin: C:/Users/ADMIN/AppData/Local/Programs/Python/Python310/python.exe
-    slim: false
-    strip: false
+    slim: true
+    strip: true
+    useStaticCache: false
+    invalidateCaches: true
 
 functions: 
   app: 
