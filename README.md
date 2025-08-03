@@ -6,56 +6,12 @@
 - **asyncpg**: Thư viện kết nối PostgreSQL bất đồng bộ, tối ưu cho hiệu năng cao.
 - **contextlib (lifespan)**: Dùng để quản lý vòng đời ứng dụng, giúp mở/đóng kết nối cơ sở dữ liệu đúng cách.
 - **authx**: Dùng để quản lý JWT Token (tạo, xác thực token từ các request).
-
+- **kafka**: Được sử dụng như một message queue để tiếp nhận và xử lý các thao tác ghi dữ liệu vào cơ sở dữ liệu theo cơ chế bất đồng bộ
 ---
-
-## 📚 Các nhóm API
-
-### 👨‍🎓 Student API
-
-| Method | Endpoint                                  | Mô tả                         |
-|--------|-------------------------------------------|-------------------------------|
-| GET    | `/student/health-check`                   | Kiểm tra tình trạng hoạt động |
-| POST   | `/student/add-student`                    | Thêm mới một sinh viên        |
-| PATCH  | `/student/update-student`                 | Cập nhật thông tin sinh viên  |
-| DELETE | `/student/delete-student/{id_student}`    | Xoá sinh viên theo ID         |
-| GET    | `/student/search`                         | Tìm kiếm sinh viên            |
-
----
-
-### 🏫 Class API
-
-| Method | Endpoint              | Mô tả                          |
-|--------|-----------------------|--------------------------------|
-| GET    | `/class/health-check` | Kiểm tra tình trạng hoạt động |
-| POST   | `/class/add`          | Thêm mới lớp học               |
-| PATCH  | `/class/update`       | Cập nhật thông tin lớp học     |
-| GET    | `/class/classes`      | Lấy danh sách lớp học          |
-
----
-
-## ⚙️ Quản lý kết nối cơ sở dữ liệu với Lifespan
-
-Sử dụng `lifespan` của FastAPI để mở và đóng kết nối cơ sở dữ liệu PostgreSQL một cách an toàn và hiệu quả:
-
-```python
-from contextlib import asynccontextmanager
-import asyncpg
-from fastapi import FastAPI
-
-@asynccontextmanager
-async def lifespan(app : FastAPI):
-    app.state.db_pool = await connect_db.create_con()
-    print('Connect DB Success')
-    yield
-    await connect_db.close_con(app.state.db_pool)
-    print('Close DB') 
-
-app = FastAPI(lifespan=lifespan)
-```
 ### Architect
 <img width="2752" height="1000" alt="image" src="https://github.com/user-attachments/assets/fb0009cb-4228-49ae-ac75-23489d3d062e" />
 
 - Đã benchmark trên máy local (Intel Core Ultra 7, 32GB RAM).
 
 ### 👨‍💻 Made by [@q1xuanx](https://github.com/q1xuanx)
+
