@@ -5,3 +5,7 @@
 
 # Pycache
 **/__pycache__/
+node_modules
+.serverless
+package-lock.json
+package.json
